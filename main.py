@@ -24,6 +24,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        
     screen.blit(player_image, player_rect)
     pygame.draw.rect(screen, "purple", player_rect, 2)
     pygame.display.update()
