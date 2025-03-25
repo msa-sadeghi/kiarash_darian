@@ -19,12 +19,21 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 player_image = pygame.image.load("./knight/Idle1.png")
 player_image = pygame.transform.scale_by(player_image,  0.5)
 player_rect = player_image.get_rect(topleft=(100,10))
+
+moving_left, moving_right, moving_up, moving_down = (False, False, False, False)
+
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                moving_left = True
+
+    if moving_left:
+        player_rect.x -= 5    
     screen.blit(player_image, player_rect)
     pygame.draw.rect(screen, "purple", player_rect, 2)
     pygame.display.update()
