@@ -23,24 +23,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_a:
-        #         moving_left = True
-        #     if event.key == pygame.K_d:
-        #         moving_right = True
-        # if event.type == pygame.KEYUP:
-        #     if event.key == pygame.K_a:
-        #         moving_left = False
-        #     if event.key == pygame.K_d:
-        #         moving_right = False
-                
-   
+    
 
-    # if moving_left:
-    #     player_rect.x -= 5
-    # if moving_right:
-    #     player_rect.x += 5
-    screen.fill((120, 230,240))   
+   
+    screen.fill((120, 230,240)) 
+    my_player.move()  
     my_player.draw(screen)
     
     pygame.display.update()
