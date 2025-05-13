@@ -24,6 +24,10 @@ class Player(Sprite):
         self.flip = False
         self.in_air = False
         self.y_vel = 0
+        self.attack = False
+        self.attack_time = pygame.time.get_ticks()
+        self.jump = False
+        
 
     def update(self, screen):
         pygame.draw.line(screen, "red", (0,500), (1000,500), 1)
@@ -34,7 +38,7 @@ class Player(Sprite):
         self.image = self.all_images[self.current_animation][self.current_frame]
         current_time = pygame.time.get_ticks()
         if current_time - self.last_animation_time > 100:
-            self.last_animation_time = current_time
+            self.last_animation_time = pygame.time.get_ticks()
             self.current_frame += 1
         if self.current_frame >= len(self.all_images[self.current_animation]):
             self.current_frame = 0
@@ -67,8 +71,19 @@ class Player(Sprite):
         
         if keys[pygame.K_UP] and not self.in_air:
             self.animation_state = "Jump"
+            self.jump = True
             self.in_air = True
             self.y_vel = -15
+
+        if keys[pygame.K_SPACE] or pygame.mouse.get_pressed()[0]:
+            self.attack = True
+            self.attack_time = pygame.time.get_ticks()
+        
+
+        if pygame.time.get_ticks() - self.attack_time > 2000 and self.attack:
+            self.attack_time = pygame.time.get_ticks()
+            self.attack = False
+            self.jump = False
         dy += self.y_vel  
         self.y_vel += 1 
         

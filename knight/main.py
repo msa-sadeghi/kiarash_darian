@@ -21,7 +21,14 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    if my_player.animation_state == "Walk":
+    
+    if my_player.jump  and my_player.attack:
+        my_player.change_animation("JumpAttack")
+    elif my_player.in_air:
+        my_player.change_animation("Jump")
+    elif my_player.attack and my_player.in_air == False:
+        my_player.change_animation("Attack")
+    elif my_player.animation_state == "Walk":
         my_player.change_animation("Walk")
     elif my_player.animation_state == "Run":
         my_player.change_animation("Run")
