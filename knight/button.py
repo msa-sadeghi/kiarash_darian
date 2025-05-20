@@ -13,6 +13,9 @@ class Button:
 
         mouse_pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
+            self.image.set_alpha(180)
             if pygame.mouse.get_pressed()[0]:
                 click = True
+        else:
+            self.image.set_alpha(255)
         return click
