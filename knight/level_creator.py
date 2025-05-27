@@ -60,8 +60,15 @@ for img in tile_images:
         c = 0
 
 level = 1
-world_data = []
 
+f = pygame.font.Font("./Bruce Forever.ttf", 20)
+level_text = f.render(f"level{level}", True, "black")
+level_rect = level_text.get_rect(center=(50, HEIGHT + 50))
+
+world_data = []
+scroll = 0
+scroll_speed = 1
+scroll_left, scroll_right = (False, False)
 for i in range(ROWS):
     temp = [-1] * COLS
     world_data.append(temp)
@@ -70,12 +77,12 @@ def draw_world(level):
     for i in range(len(world_data)):
         for j in range(len(world_data[i])):
             if world_data[i][j] != -1:
-                screen.blit(buttons_list[world_data[i][j]].image, (j * TILE_SIZE, i * TILE_SIZE))
+                screen.blit(buttons_list[world_data[i][j]].image, (j * TILE_SIZE - scroll, i * TILE_SIZE))
 
 
 def draw_lines():
     for i in range(COLS + 1):
-        pygame.draw.line(screen, "brown", (i * TILE_SIZE, 0), (i * TILE_SIZE, HEIGHT))
+        pygame.draw.line(screen, "brown", (i * TILE_SIZE - scroll, 0), (i * TILE_SIZE - scroll, HEIGHT))
     for j in range(ROWS + 1):
         pygame.draw.line(screen, "brown", ( 0, j * TILE_SIZE), (WIDTH, j * TILE_SIZE))
 
@@ -88,21 +95,43 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-   
-    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                scroll_left = True
+            if event.key == pygame.K_RIGHT:
+                scroll_right = True
+            if event.key == pygame.K_LSHIFT :
+                scroll_speed = 3
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT:
+                scroll_left = False
+            if event.key == pygame.K_RIGHT:
+                scroll_right = False
+            if event.key == pygame.K_LSHIFT:
+                scroll_speed = 1
+    if scroll_left:
+        scroll -= 5 * scroll_speed
+    elif scroll_right:
+        scroll += 5 * scroll_speed
+    if scroll < 0:
+        scroll = 0
     screen.fill((255,255,255))
+    level_text = f.render(f"level{level}", True, "black")
     draw_lines()
     pygame.draw.rect(screen, "lightblue", (WIDTH, 0, SIDE_MARGIN, HEIGHT + LOWER_MARGIN))
     pygame.draw.rect(screen, "lightblue", (0, HEIGHT, SIDE_MARGIN + WIDTH, LOWER_MARGIN))
+    screen.blit(level_text, level_rect)
     for i,btn in enumerate(buttons_list):
         if btn.update(screen):
             selected_btn_index = i
     mouse_pos = pygame.mouse.get_pos()
     r = mouse_pos[1]//TILE_SIZE
-    c = mouse_pos[0]//TILE_SIZE
-    
-    if pygame.mouse.get_pressed()[0] and mouse_pos[0] < WIDTH and mouse_pos[1] < HEIGHT:
-        world_data[r][c] = selected_btn_index
+    c = (mouse_pos[0] + scroll)//TILE_SIZE
+    if mouse_pos[0] < WIDTH and mouse_pos[1] < HEIGHT:
+        if pygame.mouse.get_pressed()[0]:
+            world_data[r][c] = selected_btn_index
+        elif pygame.mouse.get_pressed()[2]:
+            world_data[r][c] = -1
     draw_world(level)
     pygame.draw.rect(screen, "red", buttons_list[selected_btn_index].rect, 3)
     pygame.display.update()
