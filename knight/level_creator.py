@@ -1,6 +1,9 @@
 import pygame
 import os
 from button import Button
+import pickle
+
+
 pygame.init()
 
 # Constants
@@ -90,6 +93,59 @@ screen = pygame.display.set_mode((WIDTH + SIDE_MARGIN, HEIGHT+ LOWER_MARGIN))
 pygame.display.set_caption("Simple Game")
 clock = pygame.time.Clock() 
 
+
+up_arrow_btn = Button(
+    300, HEIGHT + 30,
+    pygame.transform.scale_by(
+        pygame.image.load("./arrow.png"),
+        0.2
+    ),
+    "button"
+)
+down_arrow_btn = Button(
+    350, HEIGHT + 30,
+    pygame.transform.rotate(
+        pygame.transform.scale_by(
+        pygame.image.load("./arrow.png"),
+        0.2
+    ), 180
+    ),
+    "button"
+)
+
+save_btn = Button(
+    500, HEIGHT + 30,
+    pygame.transform.scale_by(
+        pygame.image.load("./save.png"),
+        0.1
+    ),
+    "button"
+)
+load_btn = Button(
+    550, HEIGHT + 30,
+    pygame.transform.rotate(
+        pygame.transform.scale_by(
+        pygame.image.load("./load.png"),
+        0.1
+    ), 180
+    ),
+    "button"
+)
+
+
+def save_level(level):
+    with open(f"level{level}", "wb") as f:
+        pickle.dump(world_data, f)
+
+
+def load_level(level):
+    global world_data
+    with open(f"level{level}", "rb") as f:
+        world_data = pickle.load(f)
+
+
+
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -116,7 +172,7 @@ while running:
     if scroll < 0:
         scroll = 0
     screen.fill((255,255,255))
-    level_text = f.render(f"level{level}", True, "black")
+    level_text = f.render(f"level  {level}", True, "black")
     draw_lines()
     pygame.draw.rect(screen, "lightblue", (WIDTH, 0, SIDE_MARGIN, HEIGHT + LOWER_MARGIN))
     pygame.draw.rect(screen, "lightblue", (0, HEIGHT, SIDE_MARGIN + WIDTH, LOWER_MARGIN))
@@ -133,6 +189,18 @@ while running:
         elif pygame.mouse.get_pressed()[2]:
             world_data[r][c] = -1
     draw_world(level)
+
+    if up_arrow_btn.update(screen):
+        level += 1
+    elif down_arrow_btn.update(screen):
+        level -= 1
+        if level < 0:
+            level = 0        
+
+    if save_btn.update(screen):
+        save_level(level)
+    if load_btn.update(screen):
+        load_level(level)
     pygame.draw.rect(screen, "red", buttons_list[selected_btn_index].rect, 3)
     pygame.display.update()
     clock.tick(FPS)
