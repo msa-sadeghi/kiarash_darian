@@ -1,5 +1,8 @@
 import pygame
 from player import Player
+import pickle
+import os
+from world import World
 pygame.init()
 
 # Constants
@@ -14,6 +17,36 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Simple Game")
 clock = pygame.time.Clock() 
 
+TILE_SIZE = 50
+
+object_images = [
+    
+    pygame.transform.scale(
+        pygame.image.load(f"./game_world/Objects/{img}"), (TILE_SIZE, TILE_SIZE)
+    ) for img in os.listdir("./game_world/Objects")
+]
+
+tile_images = []
+for img in os.listdir("./game_world/Tiles"):
+    tile_images.append(
+        
+            pygame.transform.scale(pygame.image.load(f"./game_world/Tiles/{img}"), (TILE_SIZE, TILE_SIZE))
+        
+    )
+object_images.extend(tile_images)
+
+scroll = 1
+level = 1
+world_data = []
+def load_level(level):
+    global world_data
+    with open(f"level{level}", "rb") as f:
+        world_data = pickle.load(f)
+
+bomb_group = pygame.sprite.Group()
+energy_group = pygame.sprite.Group()
+load_level(level)
+game_world = World(world_data, object_images, scroll, 50, bomb_group, energy_group)
 
 my_player = Player(300, 300)
 running = True
@@ -37,5 +70,7 @@ while running:
     
     screen.fill(WHITE)
     my_player.update(screen)
+    bomb_group.draw(screen)
+    energy_group.draw(screen)
     pygame.display.update()
     clock.tick(FPS)
