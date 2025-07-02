@@ -1,8 +1,9 @@
 import pygame
 from bomb import Bomb
 from energy import Energy
+from box import Box
 class World:
-    def __init__(self, world_data, images, scroll, TILE_SIZE,bomb_group, energy_group):
+    def __init__(self, world_data, images, scroll, TILE_SIZE,bomb_group, energy_group, box_group):
         self.obstacle= []
         self.keys = []
         self.boxes = []
@@ -24,4 +25,6 @@ class World:
                     # TODO create key and append it to the list
                 elif world_data[i][j] in (6,21):
                     pass
-                    # TODO create ostacle and append it to the list
+                elif world_data[i][j] in (13,14,15,16,31,32,33,34,35):
+                    box = Box(images[world_data[i][j]], j * TILE_SIZE - scroll, i * TILE_SIZE, box_group)
+                    self.boxes.append(box)

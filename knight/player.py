@@ -10,7 +10,7 @@ class Player(Sprite):
             self.all_images[animation] = []
             for image in os.listdir(f"assets/{animation}"):
                 img = pygame.image.load(f"assets/{animation}/{image}")
-                img = pygame.transform.scale_by(img, 0.4)
+                img = pygame.transform.scale_by(img, 0.1)
                 self.all_images[animation].append(img)
         self.current_animation = "Idle"
         self.current_frame = 0
@@ -29,7 +29,7 @@ class Player(Sprite):
         self.jump = False
         
 
-    def update(self, screen):
+    def update(self, screen, boxes):
         pygame.draw.line(screen, "red", (0,500), (1000,500), 1)
         pygame.draw.rect(screen, "blue", self.rect, 2)
         screen.blit(
@@ -86,11 +86,11 @@ class Player(Sprite):
             self.jump = False
         dy += self.y_vel  
         self.y_vel += 1 
-        
-        if self.rect.bottom + dy >= 500:
-            self.in_air = False
-            self.y_vel = 0
-            dy = 500 - self.rect.bottom
+        for box in boxes.sprites():
+            if self.rect.colliderect(box.rect.x , box.rect.y + dy, box.rect.size[0], box.rect.size[1]):
+                self.in_air = False
+                self.y_vel = 0
+                dy = box.rect.y - self.rect.bottom
 
          
         self.rect.x += dx

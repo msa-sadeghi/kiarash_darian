@@ -45,8 +45,9 @@ def load_level(level):
 
 bomb_group = pygame.sprite.Group()
 energy_group = pygame.sprite.Group()
+box_group = pygame.sprite.Group()
 load_level(level)
-game_world = World(world_data, object_images, scroll, 50, bomb_group, energy_group)
+game_world = World(world_data, object_images, scroll, 50, bomb_group, energy_group, box_group)
 
 my_player = Player(300, 300)
 running = True
@@ -69,8 +70,10 @@ while running:
         my_player.change_animation("Idle")
     
     screen.fill(WHITE)
-    my_player.update(screen)
+    my_player.update(screen, box_group)
     bomb_group.draw(screen)
     energy_group.draw(screen)
+    box_group.draw(screen)
+    box_group.update()
     pygame.display.update()
     clock.tick(FPS)
